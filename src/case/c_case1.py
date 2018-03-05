@@ -2,23 +2,17 @@
 # -*- coding: utf-8 -*-
 
 from src.action.a_login import Alogin
-from src.action.a_logout import Alogout
+import common.getjson as getjson
 
-def run_step(test_env, browser):
-    '''执行本case所有步骤, 每个case文件必须包含此函数'''
-    import_string = "src.testdata." + test_env + ".config"
-    tcfg = __import__(import_string, None, None, "config", 0)        #导入某环境配置文件
+def run_step(env, browser):
+    '''执行本case所有步骤, 每个case文件必须包含此函数''' 
     #--------配置执行时调用的action函数------------
-    __clogin(tcfg.CFG_ENV_URL, browser, tcfg.CFG_BUYER_USERNAME, tcfg.CFG_BUYER_PASSWORD)
-    __clogout(tcfg.CFG_ENV_URL, browser)
+    __clogin(env, browser)
     #------------------------------------------
 
-def __clogin(url, browser, username, password):
+def __clogin(env, browser):
     '''登录'''
-    act = Alogin(url, browser, username, password)
+    data_j = getjson.getData(env, "config")
+    act = Alogin(data_j["url"], browser, data_j["username"], data_j["password"])
     act.login()
 
-def __clogout(url, browser):
-    '''登出'''
-    act = Alogout(url, browser)
-    act.logout()

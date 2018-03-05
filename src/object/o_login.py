@@ -1,5 +1,4 @@
 '''login page所有对象列表'''
-INPUT_USERNAME_NAME = "j_username"
-INPUT_PASSWORD_NAME = "j_password"
-BUTTON_LOGIN_NAME = "login"
-
+INPUT_USERNAME_ID = "loginName"
+INPUT_PASSWORD_ID = "password"
+BUTTON_SUBMIT_XPATH = "//button"
