@@ -1,3 +1,0 @@
-状态,  描述,                                     用例名,                文件名,                行号
-Pass,检查用户登录是否成功,                             c_case1,            a_login.py,         line 35
-Pass,检查用户登录是否成功,                             c_case2,            a_login.py,         line 35

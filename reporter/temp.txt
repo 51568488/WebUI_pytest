@@ -1,2 +1,0 @@
-Status,   CaseName,           FileName,           LineNo.,  Description
-Pass,     c_case1,            a_login.py,         line 34   检查用户登录是否成功,
