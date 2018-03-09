@@ -5,8 +5,9 @@ import sys
 import time
 from selenium import webdriver
 import bussinessfn.reporter as reporter
-import bussinessfn.case as case
+import bussinessfn.suite as suite
 import CV
+import utilitytool.utmysql as utmysql
 
 
 #-----------执行时的配置信息---------------
@@ -21,9 +22,13 @@ SUITE_NAME = "allcase"
 #--------------------------------------
 
 if __name__ == "__main__":
-    reporter.initreport(CV.FILETYPE_TXT)
-    #case.runCase(ENV_CONFIG, BROWSER_CONFIG, SUITE_NAME)
-    reporter.checkpoint(1==1)
-    reporter.checkpoint(1==1, "test")
+    '''
+    reporter.initreport()
+    suite.runCase(ENV_CONFIG, BROWSER_CONFIG, SUITE_NAME)
     reportname = "rel_" + SUITE_NAME + "_" + time.strftime("%y%m%d%H%M%S", time.localtime()) #测试报告名
     reporter.buidreport(reportname)
+    '''
+    typeid = ('001',)
+    res = utmysql.queryFirstRow("""select * from tmp_rule where datatypeid = %s""", typeid)
+    print(res)
+

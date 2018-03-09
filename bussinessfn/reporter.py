@@ -35,7 +35,7 @@ def addresult(status, casename, filename, line, des):
     elif CV.g_reptype == CV.FILETYPE_JSON or CV.g_reptype == CV.FILETYPE_HTML:
         __addresult_json(status, casename, filename, line, des)
 
-def initreport(reptype = "txt"):
+def initreport(reptype = "html"):
     '''初始化测试报告，支持html/json/txt'''
     CV.g_reptype = reptype
     __deltempresult()
@@ -43,6 +43,8 @@ def initreport(reptype = "txt"):
         initreport_txt()
     elif CV.g_reptype == CV.FILETYPE_JSON or CV.g_reptype == CV.FILETYPE_HTML:
         __writetempresult("[]")
+    else:
+        print("Error: 不支持的报告格式")
 
 def initreport_txt():
     status = CV.REPFIELD_STATUS + ","
@@ -105,7 +107,8 @@ def __addresult_json(status, casename, filename, line, des):
 def __jsontohtml(path):
     '''读html报告的json内容，转成html写回文件'''
     jobj = utjson.loadjson(path)
-    strobj = json2html.convert(json = jobj)
+    strobj = json2html.convert(json = jobj, table_attributes=CV.REPHTML_TABLESTYLE)
+    strobj = '<h1 style="text-align:center">Test Report</h1>execution timestamp:' + time.strftime("%y-%m-%d %H:%M:%S", time.localtime()) + strobj
     tempresl = open(path, "w+", encoding=CV.ENCODING, newline="\n")
     tempresl.truncate()
     tempresl.writelines(strobj)

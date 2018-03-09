@@ -15,8 +15,6 @@ class Alogin(object):
     def login(self):
         '''登录'''
         driver = self.driver
-        #driver.maximize_window()
-        #driver.implicitly_wait(60)
         driver.get(self.url)
         obj = src.object.o_login
         input_username = driver.find_element_by_id(obj.INPUT_USERNAME_ID)
