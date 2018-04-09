@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-'''测试结果模块'''
+'''测试报告相关函数'''
 import os
 import time
 from os import rename
@@ -35,18 +35,26 @@ def addresult(status, casename, filename, line, des):
     elif CV.g_reptype == CV.FILETYPE_JSON or CV.g_reptype == CV.FILETYPE_HTML:
         __addresult_json(status, casename, filename, line, des)
 
-def initreport(reptype = "html"):
+def initreport(reptype):
     '''初始化测试报告，支持html/json/txt'''
     CV.g_reptype = reptype
     __deltempresult()
     if CV.g_reptype == CV.FILETYPE_TXT:
-        initreport_txt()
+        __initreport_txt()
     elif CV.g_reptype == CV.FILETYPE_JSON or CV.g_reptype == CV.FILETYPE_HTML:
         __writetempresult("[]")
     else:
         print("Error: 不支持的报告格式")
 
-def initreport_txt():
+def buidreport(reportname = "temp"):
+    '''生成测试报告'''
+    if CV.g_reptype == CV.FILETYPE_HTML:
+        __jsontohtml(CV.REPTMPFILE_PATH + CV.g_reptype)
+    currentname = CV.REPTMPFILE_PATH + CV.g_reptype
+    newname = os.getcwd() + "/reporter/" + reportname + "." + CV.g_reptype
+    rename(currentname, newname)
+
+def __initreport_txt():
     status = CV.REPFIELD_STATUS + ","
     status = status.ljust(10)
     casename = CV.REPFIELD_CASE + ","
@@ -58,19 +66,11 @@ def initreport_txt():
     strtitle = status + casename + filename + line + CV.REPFIELD_DES + "\n"
     __writetempresult(strtitle)
 
-def buidreport(reportname = "temp"):
-    '''生成测试报告'''
-    if CV.g_reptype == CV.FILETYPE_HTML:
-        __jsontohtml(CV.REPTMPFILE_PATH + CV.g_reptype)
-    currentname = CV.REPTMPFILE_PATH + CV.g_reptype
-    newname = os.getcwd() + "/reporter/" + reportname + "." + CV.g_reptype
-    rename(currentname, newname)
-
 def __writetempresult(strline):
     path = CV.REPTMPFILE_PATH + CV.g_reptype
-    tempresl = open(path, "a", encoding=CV.ENCODING, newline="\n")
-    tempresl.writelines(strline)
-    tempresl.close()
+    with open(path, "a", encoding=CV.ENCODING, newline="\n") as tempresl:
+        tempresl.writelines(strline)
+        tempresl.close()
 
 def __deltempresult():
     tmpfile = CV.REPTMPFILE_PATH + CV.g_reptype
@@ -109,7 +109,7 @@ def __jsontohtml(path):
     jobj = utjson.loadjson(path)
     strobj = json2html.convert(json = jobj, table_attributes=CV.REPHTML_TABLESTYLE)
     strobj = '<h1 style="text-align:center">Test Report</h1>execution timestamp:' + time.strftime("%y-%m-%d %H:%M:%S", time.localtime()) + strobj
-    tempresl = open(path, "w+", encoding=CV.ENCODING, newline="\n")
-    tempresl.truncate()
-    tempresl.writelines(strobj)
-    tempresl.close()
+    with open(path, "w+", encoding=CV.ENCODING, newline="\n") as tempresl:
+        tempresl.truncate()
+        tempresl.writelines(strobj)
+        tempresl.close()

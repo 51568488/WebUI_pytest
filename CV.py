@@ -24,5 +24,11 @@ MYSQL_CONN_DBNAME = "kxl_dev_db"
 MYSQL_CONN_CHARSET = 'utf8mb4'
 
 global g_reptype
+global ENV_CONFIG
+ENV_CONFIG = None
+global SUITE_NAME
+SUITE_NAME = None
+global BROWSER
+BROWSER = None
 
 
