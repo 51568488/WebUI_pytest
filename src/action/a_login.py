@@ -3,6 +3,8 @@
 import time
 import src.object.o_login
 import CV
+import utilitytool.utelement as utelement
+import src.object.o_index
 
 class Alogin(object):
     '''参数:url, username, passowrd'''
@@ -23,5 +25,9 @@ class Alogin(object):
         input_password = driver.find_element_by_id(obj.INPUT_PASSWORD_ID)
         input_password.send_keys(self.password)
         driver.find_element_by_xpath(obj.BUTTON_SUBMIT_XPATH).click()
+        driver.find_element_by_xpath(obj.SUBMIT_ANTBTNCLICKED_XPATH).click()
         driver.implicitly_wait(5)
+        obj = src.object.o_index
+        driver.find_element_by_xpath(obj.BUTTON_INVOICEENTRY_XPATH).click()
+        utelement.createObjfile()
 

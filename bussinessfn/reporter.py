@@ -8,6 +8,7 @@ import inspect
 import CV
 import utilitytool.utjson as utjson
 from json2html import json2html
+import utilitytool.utfile as utfile
 
 def checkpoint(exp, des="None"):
     '''执行断言并记录到report文件中'''
@@ -30,28 +31,28 @@ def checkpoint(exp, des="None"):
     addresult(status, casename, filename, line, des)
 
 def addresult(status, casename, filename, line, des):
-    if CV.g_reptype == CV.FILETYPE_TXT:
+    if CV.REPTPYE == CV.FILETYPE_TXT:
         __addresult_txt(status, casename, filename, line, des)
-    elif CV.g_reptype == CV.FILETYPE_JSON or CV.g_reptype == CV.FILETYPE_HTML:
+    elif CV.REPTPYE == CV.FILETYPE_JSON or CV.REPTPYE == CV.FILETYPE_HTML:
         __addresult_json(status, casename, filename, line, des)
 
 def initreport(reptype):
     '''初始化测试报告，支持html/json/txt'''
-    CV.g_reptype = reptype
+    CV.REPTPYE = reptype
     __deltempresult()
-    if CV.g_reptype == CV.FILETYPE_TXT:
+    if CV.REPTPYE == CV.FILETYPE_TXT:
         __initreport_txt()
-    elif CV.g_reptype == CV.FILETYPE_JSON or CV.g_reptype == CV.FILETYPE_HTML:
+    elif CV.REPTPYE == CV.FILETYPE_JSON or CV.REPTPYE == CV.FILETYPE_HTML:
         __writetempresult("[]")
     else:
         print("Error: 不支持的报告格式")
 
 def buidreport(reportname = "temp"):
     '''生成测试报告'''
-    if CV.g_reptype == CV.FILETYPE_HTML:
-        __jsontohtml(CV.REPTMPFILE_PATH + CV.g_reptype)
-    currentname = CV.REPTMPFILE_PATH + CV.g_reptype
-    newname = os.getcwd() + "/reporter/" + reportname + "." + CV.g_reptype
+    if CV.REPTPYE == CV.FILETYPE_HTML:
+        __jsontohtml(CV.REPTMPFILE_PATH + CV.REPTPYE)
+    currentname = CV.REPTMPFILE_PATH + CV.REPTPYE
+    newname = os.getcwd() + "/reporter/" + reportname + "." + CV.REPTPYE
     rename(currentname, newname)
 
 def __initreport_txt():
@@ -67,13 +68,11 @@ def __initreport_txt():
     __writetempresult(strtitle)
 
 def __writetempresult(strline):
-    path = CV.REPTMPFILE_PATH + CV.g_reptype
-    with open(path, "a", encoding=CV.ENCODING, newline="\n") as tempresl:
-        tempresl.writelines(strline)
-        tempresl.close()
+    path = CV.REPTMPFILE_PATH + CV.REPTPYE
+    utfile.addNewline(path, strline)
 
 def __deltempresult():
-    tmpfile = CV.REPTMPFILE_PATH + CV.g_reptype
+    tmpfile = CV.REPTMPFILE_PATH + CV.REPTPYE
     if os.path.exists(tmpfile):
         os.remove(tmpfile)
 
@@ -100,16 +99,13 @@ def __addresult_json(status, casename, filename, line, des):
     dictj[CV.REPFIELD_FILE] = filename
     dictj[CV.REPFIELD_LINE] = line
     dictj[CV.REPFIELD_DES] = des
-    listj = utjson.loadjson(CV.REPTMPFILE_PATH + CV.g_reptype)
+    listj = utjson.loadjson(CV.REPTMPFILE_PATH + CV.REPTPYE)
     listj.append(dictj)
-    utjson.dumpjson(listj, CV.REPTMPFILE_PATH + CV.g_reptype)
+    utjson.dumpjson(listj, CV.REPTMPFILE_PATH + CV.REPTPYE)
 
 def __jsontohtml(path):
     '''读html报告的json内容，转成html写回文件'''
     jobj = utjson.loadjson(path)
     strobj = json2html.convert(json = jobj, table_attributes=CV.REPHTML_TABLESTYLE)
     strobj = '<h1 style="text-align:center">Test Report</h1>execution timestamp:' + time.strftime("%y-%m-%d %H:%M:%S", time.localtime()) + strobj
-    with open(path, "w+", encoding=CV.ENCODING, newline="\n") as tempresl:
-        tempresl.truncate()
-        tempresl.writelines(strobj)
-        tempresl.close()
+    utfile.rewriteFile(path, strobj)

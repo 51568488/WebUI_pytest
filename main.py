@@ -4,6 +4,8 @@
 import sys
 from selenium import webdriver
 import bussinessfn.suite as suite
+import utilitytool.utelement as utelement
+from src.action.a_login import Alogin
 import CV
 
 
@@ -20,5 +22,8 @@ CV.SUITE_NAME = "allcase"
 #--------------------------------------
 
 if __name__ == "__main__":
-    suite.RunSuite(CV.FILETYPE_HTML)
+    suite.RunSuite()
+    #act = Alogin("http://dev.go.xltec.cc/", "wumao_admin", "123456")
+    #act.login()
+    #utelement.createObjfile()
 
