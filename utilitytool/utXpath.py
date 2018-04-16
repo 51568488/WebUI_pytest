@@ -1,10 +1,12 @@
+import CV
+
 class XpathGEN(object):
-    def __init__(self, soup, tags, parent_layers=3):
+    def __init__(self, soup, tag, maxp_layer=3):
         self.soup = soup
-        self.tags = tags
-        self.p_layers = parent_layers
+        self.tag = tag
+        self.p_layers = maxp_layer
         self.allow_attr = ['id', 'class', 'style']
-        self.xpaths = []
+        self.xpath = []
 
     def generate_string(self, tag_attrs, attr):
         attr_value = tag_attrs[attr]
@@ -24,26 +26,32 @@ class XpathGEN(object):
                 return '%s[%s]' % (tag_name, _string)
         return tag_name
 
-    def get_tags_parents(self, tags):
-        while self.p_layers > 0:
-            tag_parents_xpath = []
-            _tags = []
-            for tag in tags:
-                tag_parents_xpath.append(self.parse_tag(tag.parent))
-                _tags.append(tag.parent)
-            self.xpaths.append(tag_parents_xpath)
+    def get_tags_parents(self, plevel):
+        tag = self.tag
+        self.xpath.append(self.parse_tag(tag))
+        while plevel >= 1:
+            self.xpath.append(self.parse_tag(tag.parent))
+            tag = tag.parent
+            plevel -= 1
 
-            self.p_layers -= 1
-            self.get_tags_parents(_tags)
-
-    def get_xpaths(self):
-        first_tags = self.tags
-        if first_tags is None:
+    def get_xpath(self):
+        if self.tag is None:
             return {'xpath': ['Did not match the conditions!']}
-        self.get_tags_parents(first_tags)
-
-        re_xpaths = []
-        for x in map(lambda x: list(x), zip(*self.xpaths)):
-            x.reverse()
-            re_xpaths.append('//'+'/'.join(x))
-        return list(set(re_xpaths))
+        plevel = 1
+        while plevel <= self.p_layers:
+            self.get_tags_parents(plevel)
+            self.xpath.reverse()
+            re_xpath = '//'+'/'.join(self.xpath)
+            if self.check_xpath(re_xpath):
+                break
+            else:
+                plevel += 1
+        return re_xpath
+        
+    def check_xpath(self, re_xpath):
+        driver = CV.BROWSER
+        elements = driver.find_elements_by_xpath(re_xpath)
+        if len(elements) == 1:
+            return True
+        else:
+            return False

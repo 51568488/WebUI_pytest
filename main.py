@@ -23,7 +23,4 @@ CV.SUITE_NAME = "allcase"
 
 if __name__ == "__main__":
     suite.RunSuite()
-    #act = Alogin("http://dev.go.xltec.cc/", "wumao_admin", "123456")
-    #act.login()
-    #utelement.createObjfile()
 

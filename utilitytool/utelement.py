@@ -25,14 +25,13 @@ def getElements(soup):
         if tag.has_attr("type"):
             tagType = str.upper(tag["type"])
         else:
-            tagType = tag.name
+            tagType = str.upper(tag.name)
         if tag.has_attr("id"):
             elementslist.append(tagType + "_" + str.upper(tag["id"]) + "_ID = '" + tag["id"] + "'\n")
         elif tag.has_attr("name"):
             elementslist.append(tagType + "_" + str.upper(tag["name"]) + "_NAME = '" + tag["name"] + "'\n")
         else:
             xpath_gen = XpathGEN(soup, tag)
-            xpathl = xpath_gen.get_xpaths()
-            for xpathstr in xpathl:
-                elementslist.append(tagType + "_" + str.upper(tag.text.replace(" ","")) + "_XPATH = '" + xpathstr + "'\n")
-    return elementslist
+            xpathstr = xpath_gen.get_xpath()
+            elementslist.append(tagType + "_" + str.upper(tag.text.replace(" ","")) + "_XPATH = '" + xpathstr + "'\n")
+    return sorted(elementslist, key=str.lower)
